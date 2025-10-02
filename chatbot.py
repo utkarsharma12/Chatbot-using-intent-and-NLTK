@@ -13,22 +13,13 @@ import requests
 import google.generativeai as genai
 from dotenv import load_dotenv
 
-# --------------------------------------------------
-# ⭐️ FIXED AND IMPROVED API KEY HANDLING ⭐️
-# --------------------------------------------------
-# This line loads the variables from your .env file
 load_dotenv() 
 
 try:
-    # Get the API key from the environment variable
     GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
     if not GOOGLE_API_KEY:
         raise ValueError("GOOGLE_API_KEY not found in .env file")
     genai.configure(api_key=GOOGLE_API_KEY)
-    
-    # This is the single, crucial line where the model is configured.
-    # The 'gemini-pro' model is now deprecated, so we use a supported model.
-    # This is the most likely cause of your error.
     gemini_model = genai.GenerativeModel('gemini-1.5-flash-latest')
     print("[INFO] Gemini model loaded successfully.")
 
@@ -36,8 +27,6 @@ except Exception as e:
     print(f"[ERROR] Could not configure Gemini. Please check your API key and .env file. Error: {e}")
     gemini_model = None
 
-# --- The rest of your code remains the same as you provided ---
-# All of this logic is correct and does not need to be changed.
 
 def download_nltk_resources():
     """Downloads necessary NLTK resources if they are not found."""
