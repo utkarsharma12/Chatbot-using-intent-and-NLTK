@@ -14,6 +14,36 @@
       "tag": "thanks",
       "patterns": ["thanks", "thank you", "much appreciated", "thx"],
       "responses": ["You're welcome!", "No problem!", "Glad to help!"]
+    },
+    {
+      "tag": "about",
+      "patterns": ["who are you", "what are you", "what is your name", "tell me about yourself"],
+      "responses": ["I am a hybrid chatbot powered by a local model and Google Gemini!", "You can call me Gemini Junior.", "I'm a bot, here to chat with you."]
+    },
+    {
+      "tag": "time",
+      "patterns": ["what is the time", "what time is it", "tell me the time"],
+      "responses": [""]
+    },
+    {
+      "tag": "date",
+      "patterns": ["what is the date", "what's today's date", "tell me the date"],
+      "responses": [""]
+    },
+    {
+      "tag": "weather",
+      "patterns": ["what is the weather like", "how's the weather", "what's the weather in Greater Noida"],
+      "responses": [""]
+    },
+    {
+      "tag": "nations",
+      "patterns": ["what is the capital of India", "tell me about Japan", "which country is New Delhi in"],
+      "responses": ["My knowledge of world nations is still limited. I need to be connected to a larger database to answer that."]
+    },
+    {
+      "tag": "general_query",
+      "patterns": ["can you explain", "tell me about", "what is", "who was", "what do you know about"],
+      "responses": [""]
     }
   ]
 }
