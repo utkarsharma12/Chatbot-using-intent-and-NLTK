@@ -2,17 +2,17 @@
   "intents": [
     {
       "tag": "greeting",
-      "patterns": ["hello", "hi", "hey", "good morning"],
+      "patterns": ["hello", "hi", "hey", "good morning", "what's up"],
       "responses": ["Hello!", "Hi there!", "Hey, how can I help you?"]
     },
     {
       "tag": "goodbye",
-      "patterns": ["bye", "see you", "good night"],
+      "patterns": ["bye", "see you", "good night", "later"],
       "responses": ["Goodbye!", "See you later!", "Take care!"]
     },
     {
       "tag": "thanks",
-      "patterns": ["thanks", "thank you", "much appreciated"],
+      "patterns": ["thanks", "thank you", "much appreciated", "thx"],
       "responses": ["You're welcome!", "No problem!", "Glad to help!"]
     }
   ]

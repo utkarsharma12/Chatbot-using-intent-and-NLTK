@@ -8,15 +8,15 @@ from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.optimizers import SGD
-
 # --------------------------------------------------
 # ✅ Ensure NLTK data is available
 # --------------------------------------------------
 def download_nltk_resources():
-    resources = ["punkt", "punkt_tab", "wordnet"]
+    """Downloads necessary NLTK resources if they are not found."""
+    resources = ["punkt", "wordnet", "omw-1.4"]
     for resource in resources:
         try:
-            if resource in ["punkt", "punkt_tab"]:
+            if resource == "punkt":
                 nltk.data.find(f"tokenizers/{resource}")
             else:
                 nltk.data.find(f"corpora/{resource}")
@@ -34,7 +34,7 @@ with open("intents.json") as file:
 
 # Create models directory if not exists
 if not os.path.exists("models"):
-    os.makedirs("models")what 
+    os.makedirs("models")
 
 words_file = "models/words.pkl"
 classes_file = "models/classes.pkl"
@@ -44,6 +44,7 @@ model_file = "models/chatbot_model.h5"
 # ✅ Training function
 # --------------------------------------------------
 def train_model():
+    """Trains the chatbot model and saves the necessary files."""
     words = []
     classes = []
     documents = []
@@ -79,11 +80,13 @@ def train_model():
         training.append([bag, output_row])
 
     random.shuffle(training)
+    
+    # Convert to numpy array
     training = np.array(training, dtype=object)
-
     train_x = np.array(list(training[:, 0]))
     train_y = np.array(list(training[:, 1]))
 
+    # Build the model
     model = Sequential()
     model.add(Dense(128, input_shape=(len(train_x[0]),), activation="relu"))
     model.add(Dropout(0.5))
@@ -91,12 +94,13 @@ def train_model():
     model.add(Dropout(0.5))
     model.add(Dense(len(train_y[0]), activation="softmax"))
 
-    sgd = SGD(learning_rate=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+    # Use the legacy SGD optimizer to avoid potential version conflicts with older code
+    sgd = SGD(learning_rate=0.01, momentum=0.9, nesterov=True)
     model.compile(loss="categorical_crossentropy", optimizer=sgd, metrics=["accuracy"])
 
     print("[INFO] Training model, please wait...")
-    model.fit(train_x, train_y, epochs=200, batch_size=5, verbose=1)
-    model.save(model_file)
+    hist = model.fit(train_x, train_y, epochs=200, batch_size=5, verbose=1)
+    model.save(model_file, hist)
     print("[INFO] Model trained and saved!")
 
 # --------------------------------------------------
@@ -113,11 +117,13 @@ classes = pickle.load(open(classes_file, "rb"))
 # ✅ Helper functions
 # --------------------------------------------------
 def clean_up_sentence(sentence):
+    """Tokenizes and lemmatizes a sentence."""
     sentence_words = nltk.word_tokenize(sentence)
     sentence_words = [lemmatizer.lemmatize(word.lower()) for word in sentence_words]
     return sentence_words
 
 def bow(sentence, words):
+    """Creates a bag of words vector for a sentence."""
     sentence_words = clean_up_sentence(sentence)
     bag = [0] * len(words)
     for s in sentence_words:
@@ -127,6 +133,7 @@ def bow(sentence, words):
     return np.array(bag)
 
 def predict_class(sentence):
+    """Predicts the intent class for a sentence."""
     bow_vector = bow(sentence, words)
     res = model.predict(np.array([bow_vector]))[0]
     ERROR_THRESHOLD = 0.25
@@ -139,14 +146,17 @@ def predict_class(sentence):
     return return_list
 
 def get_response(intents_list, intents_json):
+    """Gets a random response from the predicted intent."""
     if not intents_list:
         return "I'm not sure I understand. Can you rephrase?"
     tag = intents_list[0]["intent"]
-    for i in intents_json["intents"]:
+    list_of_intents = intents_json["intents"]
+    for i in list_of_intents:
         if i["tag"] == tag:
             return random.choice(i["responses"])
 
 def chatbot_response(msg):
+    """Generates a response from the chatbot."""
     ints = predict_class(msg)
     res = get_response(ints, intents)
     return res
@@ -154,11 +164,12 @@ def chatbot_response(msg):
 # --------------------------------------------------
 # ✅ Chat loop
 # --------------------------------------------------
-print("Chatbot is ready! (type 'quit' to exit)")
-while True:
-    message = input("You: ")
-    if message.lower() == "quit":
-        print("Chatbot: Goodbye!")
-        break
-    response = chatbot_response(message)
-    print("Chatbot:", response)
+if __name__ == "__main__":
+    print("Chatbot is ready! (type 'quit' to exit)")
+    while True:
+        message = input("You: ")
+        if message.lower() == "quit":
+            print("Chatbot: Goodbye!")
+            break
+        response = chatbot_response(message)
+        print("Chatbot:", response)
